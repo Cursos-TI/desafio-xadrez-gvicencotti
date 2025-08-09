@@ -1,32 +1,87 @@
 #include <stdio.h>
+#include <stdbool.h>
 
-// Desafio de Xadrez - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de movimentação das peças de xadrez.
-// O objetivo é utilizar estruturas de repetição e funções para determinar os limites de movimentação dentro do jogo.
+#define TABULEIRO 8
+
+bool posicao_valida(int linha, int coluna) {
+    return linha >= 0 && linha < TABULEIRO && coluna >= 0 && coluna < TABULEIRO;
+}
+
+void movimento_bispo(int linha, int coluna, int d_linha, int d_coluna) {
+    int nova_linha = linha + d_linha;
+    int nova_coluna = coluna + d_coluna;
+
+    if (!posicao_valida(nova_linha, nova_coluna)) return;
+
+    printf("Bispo pode ir para (%d,%d)\n", nova_linha, nova_coluna);
+
+    movimento_bispo(nova_linha, nova_coluna, d_linha, d_coluna);
+}
+
+void movimento_torre(int linha, int coluna) {
+    for (int c = coluna + 1; c < TABULEIRO; c++) {
+        printf("Torre pode ir para (%d,%d)\n", linha, c);
+    }
+    for (int c = coluna - 1; c >= 0; c--) {
+        printf("Torre pode ir para (%d,%d)\n", linha, c);
+    }
+    for (int l = linha - 1; l >= 0; l--) {
+        printf("Torre pode ir para (%d,%d)\n", l, coluna);
+    }
+    for (int l = linha + 1; l < TABULEIRO; l++) {
+        printf("Torre pode ir para (%d,%d)\n", l, coluna);
+    }
+}
+
+void movimento_rainha(int linha, int coluna) {
+    movimento_torre(linha, coluna);
+
+    movimento_bispo(linha, coluna, 1, 1);
+    movimento_bispo(linha, coluna, 1, -1);
+    movimento_bispo(linha, coluna, -1, 1);
+    movimento_bispo(linha, coluna, -1, -1);
+}
+
+void movimento_cavalo(int linha, int coluna) {
+    int movimentos[8][2] = {
+        {2, 1}, {1, 2}, {-1, 2}, {-2, 1},
+        {-2, -1}, {-1, -2}, {1, -2}, {2, -1}
+    };
+
+    for (int i = 0; i < 8; i++) {
+        int nova_linha = linha + movimentos[i][0];
+        int nova_coluna = coluna + movimentos[i][1];
+
+        if (!posicao_valida(nova_linha, nova_coluna)) {
+            continue;
+        }
+
+        if (i == 5) {
+            printf("Limite de movimentos do cavalo atingido\n");
+            break;
+        }
+
+        printf("Cavalo pode ir para (%d,%d)\n", nova_linha, nova_coluna);
+    }
+}
 
 int main() {
-    // Nível Novato - Movimentação das Peças
-    // Sugestão: Declare variáveis constantes para representar o número de casas que cada peça pode se mover.
+    int linha = 3, coluna = 3;
 
-    // Implementação de Movimentação do Bispo
-    // Sugestão: Utilize uma estrutura de repetição para simular a movimentação do Bispo em diagonal.
+    printf("Movimentos do Bispo a partir de (%d,%d):\n", linha, coluna);
+    movimento_bispo(linha, coluna, 1, 1);
+    movimento_bispo(linha, coluna, 1, -1);
+    movimento_bispo(linha, coluna, -1, 1);
+    movimento_bispo(linha, coluna, -1, -1);
 
-    // Implementação de Movimentação da Torre
-    // Sugestão: Utilize uma estrutura de repetição para simular a movimentação da Torre para a direita.
+    printf("\nMovimentos da Torre a partir de (%d,%d):\n", linha, coluna);
+    movimento_torre(linha, coluna);
 
-    // Implementação de Movimentação da Rainha
-    // Sugestão: Utilize uma estrutura de repetição para simular a movimentação da Rainha para a esquerda.
+    printf("\nMovimentos da Rainha a partir de (%d,%d):\n", linha, coluna);
+    movimento_rainha(linha, coluna);
 
-    // Nível Aventureiro - Movimentação do Cavalo
-    // Sugestão: Utilize loops aninhados para simular a movimentação do Cavalo em L.
-    // Um loop pode representar a movimentação horizontal e outro vertical.
-
-    // Nível Mestre - Funções Recursivas e Loops Aninhados
-    // Sugestão: Substitua as movimentações das peças por funções recursivas.
-    // Exemplo: Crie uma função recursiva para o movimento do Bispo.
-
-    // Sugestão: Implemente a movimentação do Cavalo utilizando loops com variáveis múltiplas e condições avançadas.
-    // Inclua o uso de continue e break dentro dos loops.
+    printf("\nMovimentos do Cavalo a partir de (%d,%d):\n", linha, coluna);
+    movimento_cavalo(linha, coluna);
 
     return 0;
 }
